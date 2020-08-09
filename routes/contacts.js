@@ -58,6 +58,9 @@ router.post(
 // @desc    Update contact
 // @access  Private
 router.put('/:id', auth, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
   const { name, email, phone, type } = req.body;
 
   //Build contact object
@@ -68,7 +71,7 @@ router.put('/:id', auth, async (req, res) => {
   if (type) contactFields.type = type;
 
   try {
-    let contact = await Contact.findByIdAndDelete(req.params.id);
+    let contact = await Contact.findById(req.params.id);
 
     if (!contact) return res.status(404).json({ msg: 'Contact not found' });
 
